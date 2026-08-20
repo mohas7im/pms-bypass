@@ -1,8 +1,0 @@
-[2026-08-20 11:01:45,334] INFO - Starting OpenProject Bulk Import for Project ID: 65
-[2026-08-20 11:01:45,335] INFO - Target URL: https://pms.hybrhind.com/
-[2026-08-20 11:01:45,335] INFO - Total Records to Process: 1
-[2026-08-20 11:01:45,336] INFO - Processing Task: 'frontend ui fixing and new features adding in portal' (2026-06-21) - Hours: 8
-[2026-08-20 11:01:46,234] INFO - CREATED Work Package #5162 for 'frontend ui fixing and new features adding in portal'
-[2026-08-20 11:01:46,828] INFO - CREATED Time Entry (8h) for Work Package #5162
-[2026-08-20 11:01:46,828] INFO - Bulk Import Completed.
-[2026-08-20 11:01:46,830] INFO - Summary: Created WPs=1, Created Time Entries=1, Skipped=0, Failed=0

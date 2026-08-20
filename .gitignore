@@ -1,0 +1,34 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyInstaller & Build artifacts
+build/
+dist/
+*.spec.bak
+
+# Django Database
+*.sqlite3
+*.db
+db.sqlite3
+
+# Environment & Secrets
+.env
+.env.local
+
+# Application Logs
+logs/
+*.log
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Virtual environment
+venv/
+env/
+ENV/
