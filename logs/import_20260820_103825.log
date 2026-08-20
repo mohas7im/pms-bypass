@@ -1,0 +1,8 @@
+[2026-08-20 10:38:25,042] INFO - Starting OpenProject Bulk Import for Project ID: 65
+[2026-08-20 10:38:25,043] INFO - Target URL: https://pms.hybrhind.com/
+[2026-08-20 10:38:25,043] INFO - Total Records to Process: 1
+[2026-08-20 10:38:25,044] INFO - Processing Task: 'staff performance report' (2026-08-19) - Hours: 8
+[2026-08-20 10:38:26,007] INFO - CREATED Work Package #5160 for 'staff performance report'
+[2026-08-20 10:38:26,549] INFO - CREATED Time Entry (8h) for Work Package #5160
+[2026-08-20 10:38:26,549] INFO - Bulk Import Completed.
+[2026-08-20 10:38:26,550] INFO - Summary: Created WPs=1, Created Time Entries=1, Skipped=0, Failed=0

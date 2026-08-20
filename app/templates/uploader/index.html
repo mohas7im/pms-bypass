@@ -1,0 +1,321 @@
+{% extends 'uploader/base.html' %}
+
+{% block content %}
+<!-- Wizard Progress Bar -->
+<div class="wizard-stepper retro-stepper">
+    <div class="step-item active" id="step-nav-1">
+        <div class="step-number retro-box">01</div>
+        <div class="step-label retro-font">AUTHENTICATION</div>
+    </div>
+    <div class="step-line retro-line"></div>
+    <div class="step-item" id="step-nav-2">
+        <div class="step-number retro-box">02</div>
+        <div class="step-label retro-font">MAPPING &amp; PROJECT</div>
+    </div>
+    <div class="step-line retro-line"></div>
+    <div class="step-item" id="step-nav-3">
+        <div class="step-number retro-box">03</div>
+        <div class="step-label retro-font">ENTRY &amp; PREVIEW</div>
+    </div>
+</div>
+
+<!-- Global Alert Banner -->
+<div id="alert-banner" class="alert-banner hidden retro-alert"></div>
+
+<!-- STEP 1: Connection Form -->
+<section class="card wizard-step retro-card" id="step-1-card">
+    <div class="card-header retro-card-header">
+        <div class="terminal-bar">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">AUTH_GATEWAY.EXE</span>
+        </div>
+        <h2>// OpenProject Credentials</h2>
+    </div>
+    <form id="connection-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="openproject-url" class="retro-label">&gt; OPENPROJECT_URL</label>
+            <input type="url" id="openproject-url" class="form-control retro-input" placeholder="https://pms.company.com" value="{{ openproject_url }}" required>
+            <small class="form-hint retro-hint">Ex: https://pms.company.com or https://community.openproject.org</small>
+        </div>
+
+        <div class="form-group">
+            <label for="api-token" class="retro-label">&gt; API_SECRET_TOKEN</label>
+            <input type="password" id="api-token" class="form-control retro-input" placeholder="••••••••••••••••••••••••••••••••" required>
+            <small class="form-hint retro-hint">My Account &rarr; Access Tokens &rarr; API Token</small>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary retro-btn-neon" id="btn-connect">
+                <span class="btn-text">[ INITIALIZE_CONNECT ]</span>
+                <span class="spinner hidden" id="connect-spinner"></span>
+            </button>
+        </div>
+    </form>
+</section>
+
+<!-- STEP 2: Project & Mapping Selection -->
+<section class="card wizard-step hidden retro-card" id="step-2-card">
+    <div class="card-header retro-card-header">
+        <div class="terminal-bar">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">PROJECT_SELECT.SYS</span>
+        </div>
+        <h2>// Target Project &amp; Options</h2>
+        <p>Select the target OpenProject space and task defaults.</p>
+    </div>
+
+    <form id="project-form">
+        <div class="form-group">
+            <label for="select-project" class="retro-label">&gt; TARGET_PROJECT <span class="req">*</span></label>
+            <select id="select-project" class="form-control retro-input" required>
+                <option value="">-- SELECT OPENPROJECT PROJECT --</option>
+            </select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col">
+                <label for="select-type" class="retro-label">&gt; WORK_PACKAGE_TYPE</label>
+                <select id="select-type" class="form-control retro-input">
+                    <option value="">-- DEFAULT (TASK) --</option>
+                </select>
+            </div>
+
+            <div class="form-group col">
+                <label for="select-status" class="retro-label">&gt; DEFAULT_STATUS</label>
+                <select id="select-status" class="form-control retro-input">
+                    <option value="">-- DEFAULT (CLOSED/NEW) --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col">
+                <label for="select-assignee" class="retro-label">&gt; DEFAULT_ASSIGNEE</label>
+                <select id="select-assignee" class="form-control retro-input">
+                    <option value="">-- UNASSIGNED (NONE) --</option>
+                </select>
+            </div>
+
+            <div class="form-group col">
+                <label for="select-accountable" class="retro-label">&gt; DEFAULT_ACCOUNTABLE</label>
+                <select id="select-accountable" class="form-control retro-input">
+                    <option value="">-- UNASSIGNED (NONE) --</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions space-between">
+            <button type="button" class="btn btn-secondary retro-btn" id="btn-back-step-1">&lt;&lt; BACK</button>
+            <button type="button" class="btn btn-primary retro-btn-neon" id="btn-continue-step-2">
+                CONTINUE TO STAGE 3 &gt;&gt;
+            </button>
+        </div>
+    </form>
+</section>
+
+<!-- STEP 3: Bulk Upload, Direct JSON & Single Entry Form -->
+<section class="card wizard-step hidden retro-card" id="step-3-card">
+    <div class="card-header retro-card-header">
+        <div class="terminal-bar">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">DATA_ENTRY_GATEWAY.BIN</span>
+        </div>
+        <h2>// Task Entry Options</h2>
+        <p>Choose your entry mode: Upload a file, paste JSON text, or fill a single task entry form.</p>
+    </div>
+
+    <!-- Mode Switcher Tabs -->
+    <div class="input-tab-switcher">
+        <button type="button" class="tab-btn active" id="tab-btn-file">📁 Upload File (JSON/CSV)</button>
+        <button type="button" class="tab-btn" id="tab-btn-json">📝 Paste Direct JSON Text</button>
+        <button type="button" class="tab-btn" id="tab-btn-single">✏️ Single Task Entry Form</button>
+    </div>
+
+    <!-- Mode A: File Upload Drop Zone -->
+    <div class="tab-content" id="tab-content-file">
+        <div class="drop-zone retro-drop-zone" id="drop-zone">
+            <div class="drop-zone-icon retro-icon-cyan">
+                👾
+            </div>
+            <h3 class="retro-arcade-title">DROP JSON OR CSV FILE HERE</h3>
+            <p class="retro-font">or click to browse from system storage</p>
+            <input type="file" id="file-input" accept=".json,.csv" class="hidden-file-input">
+            <div class="file-info hidden retro-file-info" id="file-info">
+                <span class="file-name" id="file-name-text"></span>
+                <button type="button" class="btn-clear-file" id="btn-clear-file">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mode B: Direct JSON Text Area Input -->
+    <div class="tab-content hidden" id="tab-content-json">
+        <div class="form-group">
+            <label for="json-text-area" class="retro-label">&gt; DIRECT_JSON_INPUT (PASTE JSON ARRAY BELOW)</label>
+            <textarea id="json-text-area" class="form-control retro-input code-font" rows="8" placeholder='[&#10;  {&#10;    "date": "2026-06-15",&#10;    "title": "Staff Performance Report",&#10;    "description": "Implemented staff performance report API",&#10;    "hours": 8,&#10;    "type": "Task",&#10;    "status": "Closed"&#10;  }&#10;]'></textarea>
+        </div>
+        <div class="paste-json-actions">
+            <button type="button" class="btn btn-primary retro-btn-neon" id="btn-preview-json-text">
+                [ PARSE &amp; PREVIEW PASTED JSON ]
+            </button>
+        </div>
+    </div>
+
+    <!-- Mode C: Single Task Entry Form -->
+    <div class="tab-content hidden" id="tab-content-single">
+        <form id="single-entry-form">
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="single-date" class="retro-label">&gt; TASK_DATE <span class="req">*</span></label>
+                    <input type="date" id="single-date" class="form-control retro-input" required>
+                </div>
+                <div class="form-group col">
+                    <label for="single-hours" class="retro-label">&gt; HOURS_LOGGED</label>
+                    <input type="number" step="0.25" min="0" max="24" id="single-hours" class="form-control retro-input" placeholder="e.g. 8">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="single-title" class="retro-label">&gt; TASK_TITLE / SUBJECT <span class="req">*</span></label>
+                <input type="text" id="single-title" class="form-control retro-input" placeholder="e.g. Implemented staff performance report API" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col">
+                    <label for="single-description" class="retro-label">&gt; DESCRIPTION / LOG DETAILS</label>
+                    <textarea id="single-description" class="form-control retro-input" rows="2" placeholder="Enter detailed work notes or specifications..."></textarea>
+                </div>
+                <div class="form-group col">
+                    <label for="single-status" class="retro-label">&gt; TASK_STATUS</label>
+                    <select id="single-status" class="form-control retro-input">
+                        <option value="">-- DEFAULT (FROM STAGE 2) --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="paste-json-actions">
+                <button type="submit" class="btn btn-primary retro-btn-neon" id="btn-add-single-entry">
+                    ⚡ [ ADD SINGLE ENTRY TO PREVIEW ]
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Preview Container (Rendered dynamically) -->
+    <div class="preview-container hidden" id="preview-container">
+        <div class="preview-header">
+            <h3 class="retro-font">// DATA PREVIEW MATRIX</h3>
+            <div class="preview-stats">
+                <span class="stat-badge retro-stat">TASKS: <strong id="stat-total-tasks">0</strong></span>
+                <span class="stat-badge retro-stat">HOURS: <strong id="stat-total-hours">0</strong></span>
+                <span class="stat-badge warn hidden retro-stat-warn" id="stat-duplicate-badge">DUPLICATES: <strong id="stat-duplicates">0</strong></span>
+            </div>
+        </div>
+
+        <!-- Preview Table -->
+        <div class="table-responsive retro-table-wrapper">
+            <table class="data-table retro-table" id="preview-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>DATE</th>
+                        <th>TASK TITLE</th>
+                        <th>DESCRIPTION</th>
+                        <th>HOURS</th>
+                        <th>STATUS</th>
+                        <th>SCAN STATUS</th>
+                    </tr>
+                </thead>
+                <tbody id="preview-tbody">
+                    <!-- Dynamic Rows -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="preview-actions">
+            <button type="button" class="btn btn-secondary retro-btn" id="btn-back-step-2-preview">&lt;&lt; BACK TO STAGE 2</button>
+            <button type="button" class="btn btn-success btn-lg retro-btn-success" id="btn-run-import">
+                <span class="btn-text">🚀 EXECUTE IMPORT TO OPENPROJECT</span>
+                <span class="spinner hidden" id="import-spinner"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Stage 3 Global Back Action (always visible when entry mode is active) -->
+    <div class="card-footer-actions" style="margin-top: 20px; text-align: left;">
+        <button type="button" class="btn btn-secondary retro-btn" id="btn-back-step-2">&lt;&lt; BACK TO STAGE 2</button>
+    </div>
+</section>
+
+<!-- RESULT MODAL / OVERLAY -->
+<div class="modal-overlay hidden" id="result-modal">
+    <div class="modal-card retro-modal">
+        <div class="modal-header retro-modal-header">
+            <div class="modal-title-group">
+                <div class="icon-success retro-icon-glow" id="modal-icon">★</div>
+                <h2 class="retro-font">// IMPORT EXECUTION COMPLETE</h2>
+            </div>
+            <button class="modal-close retro-close" id="btn-close-modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Results Summary Grid -->
+            <div class="results-grid">
+                <div class="metric-card metric-success retro-metric">
+                    <span class="metric-value" id="res-wp-count">0</span>
+                    <span class="metric-label retro-font">CREATED WPs</span>
+                </div>
+                <div class="metric-card metric-info retro-metric">
+                    <span class="metric-value" id="res-te-count">0</span>
+                    <span class="metric-label retro-font">TIME ENTRIES</span>
+                </div>
+                <div class="metric-card metric-warning retro-metric">
+                    <span class="metric-value" id="res-skipped-count">0</span>
+                    <span class="metric-label retro-font">SKIPPED (DUPS)</span>
+                </div>
+                <div class="metric-card metric-danger retro-metric">
+                    <span class="metric-value" id="res-failed-count">0</span>
+                    <span class="metric-label retro-font">FAILED</span>
+                </div>
+            </div>
+
+            <div class="total-hours-banner retro-banner">
+                TOTAL TIME LOGGED: <strong id="res-total-hours">0</strong> HOURS
+            </div>
+
+            <!-- Details Log Table -->
+            <h4 class="details-heading retro-font">// TRANSACTION AUDIT LOG</h4>
+            <div class="table-responsive modal-table-container retro-table-wrapper">
+                <table class="data-table retro-table">
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>TITLE</th>
+                            <th>HOURS</th>
+                            <th>STATUS</th>
+                            <th>LOG DETAILS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="result-tbody">
+                        <!-- Dynamic Result Rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="log-path-notice retro-hint">
+                LOG FILED TO: <code id="res-log-path">logs/import.log</code>
+            </div>
+        </div>
+
+        <div class="modal-footer retro-modal-footer">
+            <button class="btn btn-primary retro-btn-neon" id="btn-done-modal">[ CLOSE ]</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

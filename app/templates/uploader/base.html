@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ PMS Task Entry // RETRO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Press+Start+2P&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v={{ css_version|default:'2.1' }}">
+</head>
+<body class="retro-theme">
+    <!-- CRT Overlay Grid Effect -->
+    <div class="crt-overlay"></div>
+
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="app-header retro-header">
+            <div class="logo-area">
+                <div class="logo-icon retro-icon">
+                    <span>⚡</span>
+                </div>
+                <div class="logo-text">
+                    <h1 class="retro-glitch">PMS Task Entry</h1>
+                    <span class="badge local-badge retro-badge">[LOCAL_UTILITY]</span>
+                </div>
+            </div>
+
+            <div class="connection-status" id="header-status">
+                {% if connected %}
+                    <span class="status-indicator active retro-glow-green"></span>
+                    <span class="status-text retro-font">USER: <strong>{{ user_name }}</strong></span>
+                    <button class="btn btn-secondary btn-sm retro-btn" id="btn-disconnect">[ DISCONNECT ]</button>
+                {% else %}
+                    <span class="status-indicator inactive retro-glow-red"></span>
+                    <span class="status-text retro-font">[ NOT CONNECTED ]</span>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="app-main">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer retro-footer">
+            <p>PMS Task Entry</p>
+        </footer>
+    </div>
+
+    <script src="{% static 'js/main.js' %}?v={{ css_version|default:'2.0' }}"></script>
+</body>
+</html>
