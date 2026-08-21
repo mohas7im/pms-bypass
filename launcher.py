@@ -7,6 +7,18 @@ import webbrowser
 import urllib.request
 from pathlib import Path
 
+# Redirect stdout/stderr if None (PyInstaller windowed mode noconsole)
+class NullWriter:
+    def write(self, text):
+        pass
+    def flush(self):
+        pass
+
+if sys.stdout is None:
+    sys.stdout = NullWriter()
+if sys.stderr is None:
+    sys.stderr = NullWriter()
+
 # Setup environment for Django
 if getattr(sys, 'frozen', False):
     # PyInstaller bundle path
@@ -20,7 +32,14 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 import django
 django.setup()
 
-from django.core.management import call_command
+from core.wsgi import application
+from wsgiref.simple_server import make_server, WSGIRequestHandler
+
+
+class QuietWSGIRequestHandler(WSGIRequestHandler):
+    """Custom request handler that silences console logging when running windowed."""
+    def log_message(self, format, *args):
+        pass
 
 
 def is_port_in_use(port, host='127.0.0.1'):
@@ -51,8 +70,12 @@ def wait_for_server(url, timeout=15):
 
 
 def run_django_server(host, port):
-    """Runs Django dev server synchronously without reloader."""
-    call_command('runserver', f'{host}:{port}', use_reloader=False)
+    """Runs Django WSGI server directly using wsgiref."""
+    try:
+        httpd = make_server(host, port, application, handler_class=QuietWSGIRequestHandler)
+        httpd.serve_forever()
+    except Exception as e:
+        sys.stderr.write(f"Server error: {e}\n")
 
 
 def main():
@@ -63,12 +86,8 @@ def main():
         port = find_available_port(start_port=8001)
 
     url = f"http://{host}:{port}"
-    print(f"==================================================")
-    print(f" Starting OpenProject Bulk Uploader Local Server...")
-    print(f" Access URL: {url}")
-    print(f"==================================================")
 
-    # Start Django server in a background thread
+    # Start WSGI server in a background daemon thread
     server_thread = threading.Thread(
         target=run_django_server,
         args=(host, port),
@@ -76,19 +95,15 @@ def main():
     )
     server_thread.start()
 
-    # Wait for server readiness and open browser
+    # Wait for server readiness and open default browser
     if wait_for_server(url):
-        print(f"Server ready! Opening default browser at {url}...")
         webbrowser.open(url)
     else:
-        print(f"Warning: Server start timed out. Please manually navigate to {url} in your browser.")
+        webbrowser.open(url)
 
-    # Keep main process alive while thread runs
-    try:
-        while server_thread.is_alive():
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("Shutting down OpenProject Bulk Uploader server.")
+    # Keep main thread running while daemon WSGI server serves requests
+    while True:
+        time.sleep(1)
 
 
 if __name__ == '__main__':
