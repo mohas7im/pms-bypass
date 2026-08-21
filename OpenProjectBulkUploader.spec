@@ -10,6 +10,7 @@ BASE_DIR = Path(os.getcwd())
 datas = [
     (str(BASE_DIR / 'app' / 'templates'), 'app/templates'),
     (str(BASE_DIR / 'app' / 'static'), 'app/static'),
+    (str(BASE_DIR / 'app_icon.ico'), '.'),
 ]
 
 hidden_imports = [
@@ -79,5 +80,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=None
+    icon='app_icon.ico'
 )
