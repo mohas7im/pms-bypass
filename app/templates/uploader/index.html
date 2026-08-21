@@ -182,8 +182,14 @@
             </div>
 
             <div class="form-group">
-                <label for="single-title" class="retro-label">&gt; TASK_TITLE / SUBJECT <span class="req">*</span></label>
-                <input type="text" id="single-title" class="form-control retro-input" placeholder="e.g. Implemented staff performance report API" required>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label for="single-title" class="retro-label">&gt; TASK_TITLE / SUBJECT <span class="req">*</span></label>
+                    <span class="retro-hint" style="font-size: 0.75rem; color: var(--accent-cyan);">💡 Click or type to auto-complete recent titles</span>
+                </div>
+                <input type="text" id="single-title" list="recent-titles-list" class="form-control retro-input" placeholder="e.g. Implemented staff performance report API" required autocomplete="off">
+                <datalist id="recent-titles-list">
+                    <!-- Populated dynamically with recently used task titles -->
+                </datalist>
             </div>
 
             <div class="form-row">
@@ -197,6 +203,13 @@
                         <option value="">-- DEFAULT (FROM STAGE 2) --</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 4px;">
+                <label class="retro-checkbox-label" style="display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); color: var(--text-heading); cursor: pointer;">
+                    <input type="checkbox" id="chk-keep-title" checked>
+                    <span>Keep Task Title filled for next entry / status update</span>
+                </label>
             </div>
 
             <div class="paste-json-actions">

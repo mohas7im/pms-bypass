@@ -78,12 +78,14 @@ def project_details_view(request):
         types_res = client.get_types(project_id)
         statuses_res = client.get_statuses()
         users_res = client.get_users(project_id)
+        wps_res = client.get_project_work_packages(project_id)
 
         return JsonResponse({
             'success': True,
             'types': types_res.get('types', []) if types_res.get('success') else [],
             'statuses': statuses_res.get('statuses', []) if statuses_res.get('success') else [],
-            'users': users_res.get('users', []) if users_res.get('success') else []
+            'users': users_res.get('users', []) if users_res.get('success') else [],
+            'existing_tasks': wps_res.get('work_packages', []) if wps_res.get('success') else []
         })
 
     except Exception as e:

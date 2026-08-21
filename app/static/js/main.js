@@ -244,6 +244,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
                 }
+
+                // Populate Existing OpenProject Tasks Autocomplete
+                const recentTitlesDatalist = document.getElementById('recent-titles-list');
+                if (data.existing_tasks && data.existing_tasks.length > 0) {
+                    if (!window._recentTitles) window._recentTitles = new Set();
+                    data.existing_tasks.forEach(wp => {
+                        if (wp.subject) window._recentTitles.add(wp.subject);
+                    });
+                    if (recentTitlesDatalist) {
+                        recentTitlesDatalist.innerHTML = Array.from(window._recentTitles)
+                            .map(t => `<option value="${escapeHtml(t)}"></option>`)
+                            .join('');
+                    }
+                }
             } else {
                 showAlert('Could not load project details: ' + (data.error || 'Unknown error'));
                 selectType.innerHTML = '<option value="">-- Default (Task) --</option>';
@@ -347,11 +361,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const hoursVal = singleHoursInput ? parseFloat(singleHoursInput.value) : 0;
 
             const singleStatusInput = document.getElementById('single-status');
+            const chkKeepTitle = document.getElementById('chk-keep-title');
+            const recentTitlesDatalist = document.getElementById('recent-titles-list');
             const statusVal = singleStatusInput ? singleStatusInput.value.trim() : '';
 
             if (!dateVal || !titleVal) {
                 showAlert('Please provide both a valid Date and Task Title.');
                 return;
+            }
+
+            // Save to recent titles set & update datalist
+            if (titleVal && recentTitlesDatalist) {
+                if (!window._recentTitles) window._recentTitles = new Set();
+                window._recentTitles.add(titleVal);
+                recentTitlesDatalist.innerHTML = Array.from(window._recentTitles)
+                    .map(t => `<option value="${escapeHtml(t)}"></option>`)
+                    .join('');
             }
 
             const recordObj = [{
@@ -364,6 +389,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             selectedFile = null;
             handlePastedJson(JSON.stringify(recordObj));
+
+            // If keep title is checked, keep title input filled for quick status/entry change
+            if (chkKeepTitle && chkKeepTitle.checked) {
+                singleTitleInput.value = titleVal;
+            }
         });
     }
 

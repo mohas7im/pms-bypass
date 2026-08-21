@@ -213,6 +213,26 @@ class OpenProjectClient:
         except Exception as e:
             return {'success': False, 'error': str(e)}
 
+    def get_project_work_packages(self, project_id):
+        """Fetches list of existing work package subjects for autocomplete."""
+        try:
+            endpoint = f'/projects/{project_id}/work_packages?pageSize=500'
+            resp = self._request('GET', endpoint)
+            if resp.status_code == 200:
+                data = resp.json()
+                elements = data.get('_embedded', {}).get('elements', [])
+                wps = []
+                for wp in elements:
+                    if wp.get('subject'):
+                        wps.append({
+                            'id': wp.get('id'),
+                            'subject': wp.get('subject')
+                        })
+                return {'success': True, 'work_packages': wps}
+            return {'success': False, 'error': f'Failed to fetch work packages. HTTP {resp.status_code}'}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
     def find_existing_work_package(self, project_id, title, date_str):
         """Checks if a work package with matching subject and date already exists for duplicate detection."""
         try:
