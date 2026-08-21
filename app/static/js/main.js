@@ -305,35 +305,21 @@ document.addEventListener('DOMContentLoaded', () => {
         singleDateInput.value = today;
     }
 
-    if (tabBtnFile && tabBtnJson && tabBtnSingle) {
-        tabBtnFile.addEventListener('click', () => {
-            tabBtnFile.classList.add('active');
+    if (tabBtnJson && tabBtnSingle) {
+        tabBtnSingle.addEventListener('click', () => {
+            tabBtnSingle.classList.add('active');
             tabBtnJson.classList.remove('active');
-            tabBtnSingle.classList.remove('active');
 
-            tabContentFile.classList.remove('hidden');
-            tabContentJson.classList.add('hidden');
-            tabContentSingle.classList.add('hidden');
+            if (tabContentSingle) tabContentSingle.classList.remove('hidden');
+            if (tabContentJson) tabContentJson.classList.add('hidden');
         });
 
         tabBtnJson.addEventListener('click', () => {
             tabBtnJson.classList.add('active');
-            tabBtnFile.classList.remove('active');
             tabBtnSingle.classList.remove('active');
 
-            tabContentJson.classList.remove('hidden');
-            tabContentFile.classList.add('hidden');
-            tabContentSingle.classList.add('hidden');
-        });
-
-        tabBtnSingle.addEventListener('click', () => {
-            tabBtnSingle.classList.add('active');
-            tabBtnFile.classList.remove('active');
-            tabBtnJson.classList.remove('active');
-
-            tabContentSingle.classList.remove('hidden');
-            tabContentFile.classList.add('hidden');
-            tabContentJson.classList.add('hidden');
+            if (tabContentJson) tabContentJson.classList.remove('hidden');
+            if (tabContentSingle) tabContentSingle.classList.add('hidden');
         });
     }
 
@@ -397,39 +383,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    dropZone.addEventListener('click', () => fileInput.click());
+    if (dropZone && fileInput) {
+        dropZone.addEventListener('click', () => fileInput.click());
 
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('dragover');
-    });
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
 
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('dragover');
-    });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
 
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            fileInput.files = e.dataTransfer.files;
-            handleFileSelected(e.dataTransfer.files[0]);
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelected(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files && fileInput.files.length > 0) {
+                handleFileSelected(fileInput.files[0]);
+            }
+        });
+
+        if (btnClearFile) {
+            btnClearFile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.value = '';
+                selectedFile = null;
+                if (fileInfo) fileInfo.classList.add('hidden');
+                previewContainer.classList.add('hidden');
+            });
         }
-    });
-
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files && fileInput.files.length > 0) {
-            handleFileSelected(fileInput.files[0]);
-        }
-    });
-
-    btnClearFile.addEventListener('click', (e) => {
-        e.stopPropagation();
-        fileInput.value = '';
-        selectedFile = null;
-        fileInfo.classList.add('hidden');
-        previewContainer.classList.add('hidden');
-    });
+    }
 
     async function handlePastedJson(rawJsonText) {
         hideAlert();

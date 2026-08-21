@@ -133,42 +133,12 @@
 
     <!-- Mode Switcher Tabs -->
     <div class="input-tab-switcher">
-        <button type="button" class="tab-btn active" id="tab-btn-file">📁 Upload File (JSON/CSV)</button>
+        <button type="button" class="tab-btn active" id="tab-btn-single">✏️ Single Task Entry Form</button>
         <button type="button" class="tab-btn" id="tab-btn-json">📝 Paste Direct JSON Text</button>
-        <button type="button" class="tab-btn" id="tab-btn-single">✏️ Single Task Entry Form</button>
     </div>
 
-    <!-- Mode A: File Upload Drop Zone -->
-    <div class="tab-content" id="tab-content-file">
-        <div class="drop-zone retro-drop-zone" id="drop-zone">
-            <div class="drop-zone-icon retro-icon-cyan">
-                👾
-            </div>
-            <h3 class="retro-arcade-title">DROP JSON OR CSV FILE HERE</h3>
-            <p class="retro-font">or click to browse from system storage</p>
-            <input type="file" id="file-input" accept=".json,.csv" class="hidden-file-input">
-            <div class="file-info hidden retro-file-info" id="file-info">
-                <span class="file-name" id="file-name-text"></span>
-                <button type="button" class="btn-clear-file" id="btn-clear-file">&times;</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mode B: Direct JSON Text Area Input -->
-    <div class="tab-content hidden" id="tab-content-json">
-        <div class="form-group">
-            <label for="json-text-area" class="retro-label">&gt; DIRECT_JSON_INPUT (PASTE JSON ARRAY BELOW)</label>
-            <textarea id="json-text-area" class="form-control retro-input code-font" rows="8" placeholder='[&#10;  {&#10;    "date": "2026-06-15",&#10;    "title": "Staff Performance Report",&#10;    "description": "Implemented staff performance report API",&#10;    "hours": 8,&#10;    "type": "Task",&#10;    "status": "Closed"&#10;  }&#10;]'></textarea>
-        </div>
-        <div class="paste-json-actions">
-            <button type="button" class="btn btn-primary retro-btn-neon" id="btn-preview-json-text">
-                [ PARSE &amp; PREVIEW PASTED JSON ]
-            </button>
-        </div>
-    </div>
-
-    <!-- Mode C: Single Task Entry Form -->
-    <div class="tab-content hidden" id="tab-content-single">
+    <!-- Mode A: Single Task Entry Form (Default) -->
+    <div class="tab-content" id="tab-content-single">
         <form id="single-entry-form">
             <div class="form-row">
                 <div class="form-group col">
@@ -177,7 +147,7 @@
                 </div>
                 <div class="form-group col">
                     <label for="single-hours" class="retro-label">&gt; HOURS_LOGGED</label>
-                    <input type="number" step="0.25" min="0" max="24" id="single-hours" class="form-control retro-input" placeholder="e.g. 8">
+                    <input type="number" step="0.25" min="0" max="24" id="single-hours" class="form-control retro-input" placeholder="8">
                 </div>
             </div>
 
@@ -186,7 +156,7 @@
                     <label for="single-title" class="retro-label">&gt; TASK_TITLE / SUBJECT <span class="req">*</span></label>
                     <span class="retro-hint" style="font-size: 0.75rem; color: var(--accent-cyan);">💡 Click or type to auto-complete recent titles</span>
                 </div>
-                <input type="text" id="single-title" list="recent-titles-list" class="form-control retro-input" placeholder="e.g. Implemented staff performance report API" required autocomplete="off">
+                <input type="text" id="single-title" list="recent-titles-list" class="form-control retro-input" placeholder="Implemented staff performance report API" required autocomplete="off">
                 <datalist id="recent-titles-list">
                     <!-- Populated dynamically with recently used task titles -->
                 </datalist>
@@ -218,6 +188,19 @@
                 </button>
             </div>
         </form>
+    </div>
+
+    <!-- Mode B: Direct JSON Text Area Input -->
+    <div class="tab-content hidden" id="tab-content-json">
+        <div class="form-group">
+            <label for="json-text-area" class="retro-label">&gt; DIRECT_JSON_INPUT (PASTE JSON ARRAY BELOW)</label>
+            <textarea id="json-text-area" class="form-control retro-input code-font" rows="8" placeholder='[&#10;  {&#10;    "date": "2026-06-15",&#10;    "title": "Staff Performance Report",&#10;    "description": "Implemented staff performance report API",&#10;    "hours": 8,&#10;    "type": "Task",&#10;    "status": "Closed"&#10;  }&#10;]'></textarea>
+        </div>
+        <div class="paste-json-actions">
+            <button type="button" class="btn btn-primary retro-btn-neon" id="btn-preview-json-text">
+                [ PARSE &amp; PREVIEW PASTED JSON ]
+            </button>
+        </div>
     </div>
 
     <!-- Preview Container (Rendered dynamically) -->
