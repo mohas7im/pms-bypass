@@ -1,4 +1,4 @@
-# OpenProject Bulk Uploader
+# PMS Bypass Uploader
 
 A lightweight, zero-hosting local desktop application for bulk uploading work packages and daily time entries to OpenProject via REST API v3.
 

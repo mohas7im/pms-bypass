@@ -636,6 +636,32 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCloseModal.addEventListener('click', closeModal);
     btnDoneModal.addEventListener('click', closeModal);
 
+    // Disclaimer Modal Handlers
+    const disclaimerModal = document.getElementById('disclaimer-modal');
+    const btnAcceptDisclaimer = document.getElementById('btn-accept-disclaimer');
+    const btnCloseDisclaimer = document.getElementById('btn-close-disclaimer');
+    const btnShowDisclaimer = document.getElementById('btn-show-disclaimer');
+
+    if (disclaimerModal) {
+        // Show disclaimer on home page if not yet accepted
+        if (localStorage.getItem('disclaimer_accepted') !== 'true') {
+            disclaimerModal.classList.remove('hidden');
+        }
+
+        const closeDisclaimer = () => {
+            localStorage.setItem('disclaimer_accepted', 'true');
+            disclaimerModal.classList.add('hidden');
+        };
+
+        if (btnAcceptDisclaimer) btnAcceptDisclaimer.addEventListener('click', closeDisclaimer);
+        if (btnCloseDisclaimer) btnCloseDisclaimer.addEventListener('click', closeDisclaimer);
+        if (btnShowDisclaimer) {
+            btnShowDisclaimer.addEventListener('click', () => {
+                disclaimerModal.classList.remove('hidden');
+            });
+        }
+    }
+
     // Disconnect Handler & State Reset
     function resetConnectionState() {
         if (headerStatus) {
@@ -648,6 +674,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectProject) selectProject.innerHTML = '<option value="">-- SELECT OPENPROJECT PROJECT --</option>';
         if (selectType) selectType.innerHTML = '<option value="">-- DEFAULT (TASK) --</option>';
         if (selectStatus) selectStatus.innerHTML = '<option value="">-- DEFAULT --</option>';
+        if (selectAssignee) selectAssignee.innerHTML = '<option value="">-- UNASSIGNED (NONE) --</option>';
+        if (selectAccountable) selectAccountable.innerHTML = '<option value="">-- UNASSIGNED (NONE) --</option>';
         if (previewContainer) previewContainer.classList.add('hidden');
         goToStep(1);
     }
@@ -667,9 +695,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 resetConnectionState();
                 showAlert('Disconnected from OpenProject session.', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 400);
             }
         });
     }
+    attachDisconnectHandler();
     function populateProjectDropdown(selectElem, projects) {
         selectElem.innerHTML = '<option value="">-- SELECT OPENPROJECT PROJECT --</option>';
         if (!projects || projects.length === 0) return;
