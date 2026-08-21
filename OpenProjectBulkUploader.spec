@@ -67,14 +67,14 @@ exe = EXE(
     a.zipfiles,
     a.datas,
     [],
-    name='OpenProjectBulkUploader',
+    name='OpenProjectTaskBridge',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,  # Set to True so user can see startup log or close cleanly
+    console=False,  # Hidden background window for seamless execution
     disable_windowed_traceback=False,
     target_arch=None,
     codesign_identity=None,
