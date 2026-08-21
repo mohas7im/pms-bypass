@@ -358,10 +358,17 @@
                     Users are solely responsible for verifying input data, project selections, user assignments, and server credentials before executing any import.
                 </p>
             </div>
+
+            <div style="margin-top: 12px; padding: 10px; background: rgba(245, 158, 11, 0.08); border-radius: 6px;">
+                <label class="retro-checkbox-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #333; font-weight: 600; margin: 0;">
+                    <input type="checkbox" id="chk-accept-disclaimer">
+                    <span>I have read, understood, and agree to the Terms &amp; Disclaimer.</span>
+                </label>
+            </div>
         </div>
 
         <div class="modal-footer retro-modal-footer" style="justify-content: flex-end;">
-            <button class="btn btn-primary retro-btn-neon" id="btn-accept-disclaimer" style="background: #f59e0b; border-color: #d97706; color: #ffffff;">
+            <button class="btn btn-primary retro-btn-neon" id="btn-accept-disclaimer" disabled style="background: #f59e0b; border-color: #d97706; color: #ffffff; opacity: 0.5; cursor: not-allowed;">
                 [ I ACKNOWLEDGE &amp; ACCEPT TERMS ]
             </button>
         </div>

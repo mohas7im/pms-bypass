@@ -628,23 +628,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Disclaimer Modal Handlers
     const disclaimerModal = document.getElementById('disclaimer-modal');
+    const chkAcceptDisclaimer = document.getElementById('chk-accept-disclaimer');
     const btnAcceptDisclaimer = document.getElementById('btn-accept-disclaimer');
     const btnCloseDisclaimer = document.getElementById('btn-close-disclaimer');
     const btnShowDisclaimer = document.getElementById('btn-show-disclaimer');
 
     if (disclaimerModal) {
-        // Show disclaimer on home page if not yet accepted
+        // Show disclaimer on home page if not yet accepted (one time only)
         if (localStorage.getItem('disclaimer_accepted') !== 'true') {
             disclaimerModal.classList.remove('hidden');
         }
 
+        if (chkAcceptDisclaimer && btnAcceptDisclaimer) {
+            chkAcceptDisclaimer.addEventListener('change', () => {
+                if (chkAcceptDisclaimer.checked) {
+                    btnAcceptDisclaimer.disabled = false;
+                    btnAcceptDisclaimer.style.opacity = '1';
+                    btnAcceptDisclaimer.style.cursor = 'pointer';
+                } else {
+                    btnAcceptDisclaimer.disabled = true;
+                    btnAcceptDisclaimer.style.opacity = '0.5';
+                    btnAcceptDisclaimer.style.cursor = 'not-allowed';
+                }
+            });
+        }
+
         const closeDisclaimer = () => {
+            if (chkAcceptDisclaimer && !chkAcceptDisclaimer.checked) return;
             localStorage.setItem('disclaimer_accepted', 'true');
             disclaimerModal.classList.add('hidden');
         };
 
         if (btnAcceptDisclaimer) btnAcceptDisclaimer.addEventListener('click', closeDisclaimer);
-        if (btnCloseDisclaimer) btnCloseDisclaimer.addEventListener('click', closeDisclaimer);
+        if (btnCloseDisclaimer) {
+            btnCloseDisclaimer.addEventListener('click', () => {
+                disclaimerModal.classList.add('hidden');
+            });
+        }
         if (btnShowDisclaimer) {
             btnShowDisclaimer.addEventListener('click', () => {
                 disclaimerModal.classList.remove('hidden');
