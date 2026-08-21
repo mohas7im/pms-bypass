@@ -1,4 +1,4 @@
-# OpenProject Bypass Uploader
+# OpenProject Task Bridge
 
 A lightweight, zero-hosting local desktop application for bulk uploading work packages and daily time entries to OpenProject via REST API v3.
 

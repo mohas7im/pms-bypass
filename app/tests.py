@@ -114,7 +114,7 @@ class ViewsTestCase(TestCase):
     def test_index_page(self):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "OpenProject Bypass Uploader")
+        self.assertContains(response, "OpenProject Task Bridge")
 
 
     def test_download_sample(self):
